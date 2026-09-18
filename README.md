@@ -74,6 +74,22 @@ types      → types TypeScript partagés (Task, AuthUser, UserProfile, ...)
 
 > **Note technique :** au moment de la réalisation de ce test, Spring Initializr ne propose plus Spring Boot 3.x (plage de compatibilité `>=4.0.0`). Le projet utilise donc Spring Boot 4.1, dont le modèle de programmation (Spring Web MVC, Spring Data JPA, Spring Security par filtre) est directement équivalent à celui de Spring Boot 3.x demandé dans l'énoncé.
 
+## Configuration (.env)
+
+Toutes les valeurs sensibles (identifiants base de données, secret JWT, ports) sont lues depuis des variables d'environnement — aucune n'est codée en dur dans le dépôt. Chaque `.env` réel est ignoré par Git ; seuls les `.env.example` sont versionnés.
+
+| Fichier                     | Utilisé par                          |
+|------------------------------|---------------------------------------|
+| `.env` (racine)              | `docker compose up`                   |
+| `backend/.env`               | `./mvnw spring-boot:run` (via [spring-dotenv](https://github.com/paulschwarz/spring-dotenv)) |
+| `frontend/.env`              | `npm run dev` / `npm run build` (Vite)|
+
+```bash
+cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
 ## Démarrage rapide (Docker Compose)
 
 Prérequis : Docker et Docker Compose.
@@ -81,26 +97,28 @@ Prérequis : Docker et Docker Compose.
 ```bash
 git clone https://github.com/DavidDef04/task-manager-enterprise.git
 cd task-manager-enterprise
+cp .env.example .env
 docker compose up --build
 ```
 
 - Frontend : http://localhost:5173
 - API : http://localhost:8081/api
 - Documentation Swagger : http://localhost:8081/swagger-ui.html
-- MySQL exposé sur le port 3307 sur la machine hôte (utilisateur `taskmanager` / mot de passe `taskmanager`)
+- MySQL exposé sur le port 3307 sur la machine hôte (utilisateur/mot de passe définis dans `.env`)
 
 ## Démarrage en local (sans Docker)
 
 ### Backend
 
-Prérequis : JDK 21, MySQL 8 (ou modifier `application.yml` pour pointer vers votre instance).
+Prérequis : JDK 21, MySQL 8 (ou modifier `backend/.env` pour pointer vers votre instance).
 
 ```bash
 cd backend
+cp .env.example .env
 ./mvnw spring-boot:run
 ```
 
-L'API démarre sur `http://localhost:8081`. Par défaut elle se connecte à `jdbc:mysql://localhost:3306/taskmanager` (base créée automatiquement). Ces valeurs sont surchargeables via les variables d'environnement `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`.
+L'API démarre sur le port défini par `SERVER_PORT` (8081 par défaut). Toutes les autres valeurs (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `JWT_EXPIRATION_MS`) viennent de `backend/.env`.
 
 ### Frontend
 
@@ -210,4 +228,10 @@ task-manager-enterprise/
 
 ## Captures d'écran
 
-_À ajouter après le premier lancement local (pages de connexion, d'inscription et tableau des tâches)._
+| Connexion | Inscription |
+|---|---|
+| ![Page de connexion](docs/screenshots/login.png) | ![Page d'inscription](docs/screenshots/register.png) |
+
+| Tableau de bord | Création de tâche (calendrier) |
+|---|---|
+| ![Tableau de bord](docs/screenshots/dashboard.png) | ![Formulaire de tâche avec calendrier](docs/screenshots/task-form-calendar.png) |
