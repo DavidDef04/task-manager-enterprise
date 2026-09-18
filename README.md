@@ -50,10 +50,17 @@ config      → configuration OpenAPI/Swagger
 ```
 api        → client Axios + appels HTTP typés vers le backend
 context    → AuthContext (session, token JWT persistés en localStorage)
+i18n       → LanguageContext + dictionnaire EN/FR (langue détectée du navigateur, persistée)
 components → briques UI réutilisables (formulaire, liste, carte de tâche, modales animées, garde de route)
 pages      → écrans (connexion, inscription, tableau de bord des tâches, paramètres du compte)
 types      → types TypeScript partagés (Task, AuthUser, UserProfile, ...)
 ```
+
+**Fonctionnalités notables :**
+- **Tableau de bord** : cartes de statistiques, recherche, filtres par statut et par échéance (en retard / aujourd'hui / 7 prochains jours / sans échéance), création et édition de tâches dans des modales animées, suppression avec confirmation.
+- **Échéances** : chaque tâche peut avoir une date d'échéance optionnelle, avec badge "en retard" sur les tâches dépassées.
+- **Bilingue (EN/FR)** : sélecteur de langue dans l'en-tête et dans les paramètres.
+- **Paramètres du compte** : modification du profil (username/email) et changement de mot de passe.
 
 ## Stack technique
 
