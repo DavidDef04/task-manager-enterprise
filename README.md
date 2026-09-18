@@ -50,9 +50,9 @@ config      → configuration OpenAPI/Swagger
 ```
 api        → client Axios + appels HTTP typés vers le backend
 context    → AuthContext (session, token JWT persistés en localStorage)
-components → briques UI réutilisables (formulaire, liste, carte de tâche, garde de route)
-pages      → écrans (connexion, inscription, tableau des tâches)
-types      → types TypeScript partagés (Task, AuthUser, ...)
+components → briques UI réutilisables (formulaire, liste, carte de tâche, modales animées, garde de route)
+pages      → écrans (connexion, inscription, tableau de bord des tâches, paramètres du compte)
+types      → types TypeScript partagés (Task, AuthUser, UserProfile, ...)
 ```
 
 ## Stack technique
@@ -60,7 +60,7 @@ types      → types TypeScript partagés (Task, AuthUser, ...)
 | Domaine       | Technologies |
 |---------------|--------------|
 | Backend       | Java 21, Spring Boot 4.1, Spring Data JPA, Spring Security 6, JWT (jjwt), MySQL 8, Maven |
-| Frontend      | React 18, Vite, TypeScript, Tailwind CSS 4, Axios, React Router, react-hot-toast |
+| Frontend      | React 18, Vite, TypeScript, Tailwind CSS 4, Axios, React Router, Framer Motion, react-hot-toast |
 | Tests         | JUnit 5, Mockito, AssertJ, Spring MockMvc, base H2 en mémoire |
 | Documentation | springdoc-openapi (Swagger UI) |
 | DevOps        | Docker (multi-stage), Docker Compose, GitHub Actions |
@@ -120,6 +120,9 @@ Une fois le backend démarré, la documentation interactive Swagger est disponib
 | POST    | `/api/tasks`          | Création d'une tâche                      | Oui               |
 | PUT     | `/api/tasks/{id}`     | Modification d'une tâche                  | Oui               |
 | DELETE  | `/api/tasks/{id}`     | Suppression d'une tâche                   | Oui               |
+| GET     | `/api/users/me`       | Profil de l'utilisateur connecté          | Oui               |
+| PUT     | `/api/users/me`       | Mise à jour du username/email             | Oui               |
+| PUT     | `/api/users/me/password` | Changement de mot de passe             | Oui               |
 
 Les routes protégées attendent l'en-tête `Authorization: Bearer <token>`.
 
