@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import type { Task, TaskInput, TaskStatus } from "../types";
 import { useLanguage } from "../i18n/LanguageContext";
+import { DatePicker } from "./DatePicker";
 
 interface TaskFormProps {
   initialTask?: Task;
@@ -20,7 +21,10 @@ export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
   const [title, setTitle] = useState(initialTask?.title ?? "");
   const [description, setDescription] = useState(initialTask?.description ?? "");
   const [status, setStatus] = useState<TaskStatus>(initialTask?.status ?? "TODO");
-  const [dueDate, setDueDate] = useState(initialTask?.dueDate ?? "");
+  const [dueDate, setDueDate] = useState<string | null>(initialTask?.dueDate ?? null);
+  const [estimatedHours, setEstimatedHours] = useState(
+    initialTask?.estimatedHours != null ? String(initialTask.estimatedHours) : ""
+  );
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
@@ -29,12 +33,19 @@ export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
 
     setSubmitting(true);
     try {
-      await onSubmit({ title: title.trim(), description: description.trim(), status, dueDate: dueDate || null });
+      await onSubmit({
+        title: title.trim(),
+        description: description.trim(),
+        status,
+        dueDate: dueDate || null,
+        estimatedHours: estimatedHours ? Number(estimatedHours) : null,
+      });
       if (!initialTask) {
         setTitle("");
         setDescription("");
         setStatus("TODO");
-        setDueDate("");
+        setDueDate(null);
+        setEstimatedHours("");
       }
     } finally {
       setSubmitting(false);
@@ -93,33 +104,38 @@ export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
         </div>
       </div>
 
-      <div>
-        <label htmlFor="dueDate" className="mb-1.5 block text-sm font-medium text-slate-700">
-          {t.taskForm.dueDateLabel}
-        </label>
-        <div className="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-          </svg>
-          <input
-            id="dueDate"
-            type="date"
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-slate-700">{t.taskForm.dueDateLabel}</label>
+          <DatePicker
             value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 py-2.5 pl-9 pr-3 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            onChange={setDueDate}
+            placeholder={t.taskForm.datePickerPlaceholder}
+            todayLabel={t.taskForm.datePickerToday}
+            clearLabel={t.taskForm.datePickerClear}
           />
-          {dueDate && (
-            <button
-              type="button"
-              onClick={() => setDueDate("")}
-              aria-label="Clear due date"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-400 hover:text-slate-600"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
+        </div>
+
+        <div>
+          <label htmlFor="estimatedHours" className="mb-1.5 block text-sm font-medium text-slate-700">
+            {t.taskForm.estimatedHoursLabel}
+          </label>
+          <div className="relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <input
+              id="estimatedHours"
+              type="number"
+              min={0}
+              step={0.5}
+              value={estimatedHours}
+              onChange={(e) => setEstimatedHours(e.target.value)}
+              placeholder={t.taskForm.estimatedHoursPlaceholder}
+              className="w-full rounded-lg border border-slate-300 py-2.5 pl-9 pr-3 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
         </div>
       </div>
 

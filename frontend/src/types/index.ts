@@ -6,6 +6,7 @@ export interface Task {
   description: string | null;
   status: TaskStatus;
   dueDate: string | null;
+  estimatedHours: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,6 +16,7 @@ export interface TaskInput {
   description: string;
   status: TaskStatus;
   dueDate: string | null;
+  estimatedHours: number | null;
 }
 
 export type DueFilter = "ALL" | "OVERDUE" | "TODAY" | "NEXT_7_DAYS" | "NO_DATE";

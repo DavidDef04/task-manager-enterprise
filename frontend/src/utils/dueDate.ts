@@ -1,4 +1,5 @@
 import type { DueFilter, Task } from "../types";
+import type { Translations } from "../i18n/translations";
 
 function startOfToday(): Date {
   const now = new Date();
@@ -47,4 +48,47 @@ export function formatDueDate(dueDate: string, labels: DueDateLabels): string {
   if (diff === 1) return labels.tomorrow;
   if (diff === -1) return labels.yesterday;
   return formatted;
+}
+
+export interface TaskNotification {
+  id: string;
+  taskId: number;
+  severity: "overdue" | "upcoming";
+  message: string;
+}
+
+const UPCOMING_WINDOW_DAYS = 3;
+
+export function getTaskNotifications(tasks: Task[], labels: Translations["notifications"]): TaskNotification[] {
+  const overdue: TaskNotification[] = [];
+  const upcoming: TaskNotification[] = [];
+
+  for (const task of tasks) {
+    if (!task.dueDate || task.status === "DONE") continue;
+    const diff = daysUntil(task.dueDate);
+
+    if (diff < 0) {
+      const days = Math.abs(diff);
+      overdue.push({
+        id: `overdue-${task.id}`,
+        taskId: task.id,
+        severity: "overdue",
+        message: days === 1 ? labels.overdueOne(task.title) : labels.overdueMany(task.title, days),
+      });
+    } else if (diff <= UPCOMING_WINDOW_DAYS) {
+      upcoming.push({
+        id: `upcoming-${task.id}`,
+        taskId: task.id,
+        severity: "upcoming",
+        message:
+          diff === 0
+            ? labels.dueToday(task.title)
+            : diff === 1
+            ? labels.dueTomorrow(task.title)
+            : labels.dueInDays(task.title, diff),
+      });
+    }
+  }
+
+  return [...overdue, ...upcoming];
 }

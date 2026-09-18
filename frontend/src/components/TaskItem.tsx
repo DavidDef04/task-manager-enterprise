@@ -59,10 +59,19 @@ export function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
               {formatDueDate(task.dueDate, t.taskDue)}
             </span>
           )}
+          {task.estimatedHours != null && (
+            <span className="flex shrink-0 items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3 w-3">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {task.estimatedHours}h
+            </span>
+          )}
         </div>
         {task.description && <p className="mt-1.5 pl-3.5 text-sm text-slate-500">{task.description}</p>}
       </div>
-      <div className="flex shrink-0 gap-1.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+      <div className="flex shrink-0 gap-1.5">
         <button
           onClick={() => onEdit(task)}
           aria-label="Edit task"

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../i18n/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { NotificationBell } from "./NotificationBell";
 
 function initials(name: string): string {
   return name.slice(0, 2).toUpperCase();
@@ -45,6 +46,7 @@ export function Navbar() {
 
         {user && (
           <div className="flex items-center gap-3">
+          <NotificationBell />
           <LanguageSwitcher compact />
           <div className="relative" ref={menuRef}>
             <button

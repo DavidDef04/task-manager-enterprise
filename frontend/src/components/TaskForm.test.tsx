@@ -23,6 +23,7 @@ describe("TaskForm", () => {
         description: "Quarterly report",
         status: "TODO",
         dueDate: null,
+        estimatedHours: null,
       });
     });
   });
@@ -46,6 +47,7 @@ describe("TaskForm", () => {
           description: "Existing description",
           status: "IN_PROGRESS",
           dueDate: null,
+          estimatedHours: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }}
