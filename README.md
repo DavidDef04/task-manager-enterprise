@@ -80,7 +80,7 @@ docker compose up --build
 - Frontend : http://localhost:5173
 - API : http://localhost:8081/api
 - Documentation Swagger : http://localhost:8081/swagger-ui.html
-- MySQL exposé sur le port 3306 (utilisateur `taskmanager` / mot de passe `taskmanager`)
+- MySQL exposé sur le port 3307 sur la machine hôte (utilisateur `taskmanager` / mot de passe `taskmanager`)
 
 ## Démarrage en local (sans Docker)
 
