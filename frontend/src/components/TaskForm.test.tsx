@@ -1,11 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import type { ReactElement } from "react";
 import { TaskForm } from "./TaskForm";
+import { LanguageProvider } from "../i18n/LanguageContext";
+
+function renderWithProviders(ui: ReactElement) {
+  return render(<LanguageProvider>{ui}</LanguageProvider>);
+}
 
 describe("TaskForm", () => {
   it("submits the entered title, description and status", async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
-    render(<TaskForm onSubmit={onSubmit} />);
+    renderWithProviders(<TaskForm onSubmit={onSubmit} />);
 
     fireEvent.change(screen.getByLabelText("Title"), { target: { value: "Write report" } });
     fireEvent.change(screen.getByLabelText("Description"), { target: { value: "Quarterly report" } });
@@ -16,13 +22,14 @@ describe("TaskForm", () => {
         title: "Write report",
         description: "Quarterly report",
         status: "TODO",
+        dueDate: null,
       });
     });
   });
 
   it("does not submit when the title is blank", () => {
     const onSubmit = vi.fn();
-    render(<TaskForm onSubmit={onSubmit} />);
+    renderWithProviders(<TaskForm onSubmit={onSubmit} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Add task" }));
 
@@ -31,13 +38,14 @@ describe("TaskForm", () => {
 
   it("pre-fills the form and shows a cancel button when editing an existing task", () => {
     const onCancel = vi.fn();
-    render(
+    renderWithProviders(
       <TaskForm
         initialTask={{
           id: 1,
           title: "Existing task",
           description: "Existing description",
           status: "IN_PROGRESS",
+          dueDate: null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }}

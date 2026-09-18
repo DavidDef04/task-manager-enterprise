@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import type { Task } from "../types";
+import { formatDueDate, isOverdue } from "../utils/dueDate";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const STATUS_STYLES: Record<Task["status"], string> = {
   TODO: "bg-slate-100 text-slate-600",
@@ -19,7 +21,16 @@ interface TaskItemProps {
   onDelete: (task: Task) => void;
 }
 
+const STATUS_LABEL_KEY: Record<Task["status"], "statusTodo" | "statusInProgress" | "statusDone"> = {
+  TODO: "statusTodo",
+  IN_PROGRESS: "statusInProgress",
+  DONE: "statusDone",
+};
+
 export function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
+  const { t } = useLanguage();
+  const overdue = isOverdue(task);
+
   return (
     <motion.div
       layout
@@ -34,8 +45,20 @@ export function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${STATUS_DOT[task.status]}`} />
           <h3 className="truncate font-medium text-slate-800">{task.title}</h3>
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>
-            {task.status.replace("_", " ")}
+            {t.taskForm[STATUS_LABEL_KEY[task.status]]}
           </span>
+          {task.dueDate && (
+            <span
+              className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                overdue ? "bg-red-50 text-red-600" : "bg-indigo-50 text-indigo-600"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-3 w-3">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              {formatDueDate(task.dueDate, t.taskDue)}
+            </span>
+          )}
         </div>
         {task.description && <p className="mt-1.5 pl-3.5 text-sm text-slate-500">{task.description}</p>}
       </div>

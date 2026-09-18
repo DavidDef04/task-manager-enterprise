@@ -6,9 +6,11 @@ import { extractErrorMessage } from "../utils/apiError";
 import { AuthLayout } from "../components/AuthLayout";
 import { PasswordInput } from "../components/PasswordInput";
 import { SubmitButton } from "../components/SubmitButton";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export function LoginPage() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +23,7 @@ export function LoginPage() {
       await login({ email, password });
       navigate("/tasks");
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Invalid email or password"));
+      toast.error(extractErrorMessage(error, t.auth.login.invalidError));
     } finally {
       setSubmitting(false);
     }
@@ -29,13 +31,13 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Welcome back"
-      subtitle="Sign in to manage your tasks"
+      title={t.auth.login.title}
+      subtitle={t.auth.login.subtitle}
       footer={
         <>
-          No account?{" "}
+          {t.auth.login.noAccount}{" "}
           <Link to="/register" className="font-medium text-indigo-600 transition-colors hover:text-indigo-700">
-            Create one
+            {t.auth.login.createOne}
           </Link>
         </>
       }
@@ -43,7 +45,7 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700">
-            Email
+            {t.auth.login.email}
           </label>
           <input
             id="email"
@@ -59,7 +61,7 @@ export function LoginPage() {
 
         <PasswordInput
           id="password"
-          label="Password"
+          label={t.auth.login.password}
           required
           autoComplete="current-password"
           value={password}
@@ -67,8 +69,8 @@ export function LoginPage() {
           placeholder="••••••••"
         />
 
-        <SubmitButton loading={submitting} loadingLabel="Signing in…">
-          Log in
+        <SubmitButton loading={submitting} loadingLabel={t.auth.login.submitting}>
+          {t.auth.login.submit}
         </SubmitButton>
       </form>
     </AuthLayout>

@@ -6,9 +6,11 @@ import { extractErrorMessage } from "../utils/apiError";
 import { AuthLayout } from "../components/AuthLayout";
 import { PasswordInput } from "../components/PasswordInput";
 import { SubmitButton } from "../components/SubmitButton";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export function RegisterPage() {
   const { register } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -22,17 +24,17 @@ export function RegisterPage() {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error(t.auth.register.passwordMismatch);
       return;
     }
 
     setSubmitting(true);
     try {
       await register({ username, email, password });
-      toast.success("Account created");
+      toast.success(t.auth.register.accountCreated);
       navigate("/tasks");
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Could not create account"));
+      toast.error(extractErrorMessage(error, t.auth.register.createError));
     } finally {
       setSubmitting(false);
     }
@@ -40,13 +42,13 @@ export function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Create your account"
-      subtitle="Start organizing your work in minutes"
+      title={t.auth.register.title}
+      subtitle={t.auth.register.subtitle}
       footer={
         <>
-          Already have an account?{" "}
+          {t.auth.register.haveAccount}{" "}
           <Link to="/login" className="font-medium text-indigo-600 transition-colors hover:text-indigo-700">
-            Log in
+            {t.auth.register.logIn}
           </Link>
         </>
       }
@@ -54,7 +56,7 @@ export function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-slate-700">
-            Username
+            {t.auth.register.username}
           </label>
           <input
             id="username"
@@ -72,7 +74,7 @@ export function RegisterPage() {
 
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700">
-            Email
+            {t.auth.register.email}
           </label>
           <input
             id="email"
@@ -88,31 +90,31 @@ export function RegisterPage() {
 
         <PasswordInput
           id="password"
-          label="Password"
+          label={t.auth.register.password}
           required
           minLength={8}
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="At least 8 characters"
+          placeholder={t.auth.register.passwordHint}
         />
 
         <div>
           <PasswordInput
             id="confirmPassword"
-            label="Confirm password"
+            label={t.auth.register.confirmPassword}
             required
             autoComplete="new-password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Re-enter your password"
+            placeholder={t.auth.register.confirmPasswordHint}
             className={passwordsMismatch ? "border-red-300 focus:border-red-500 focus:ring-red-100" : ""}
           />
-          {passwordsMismatch && <p className="mt-1.5 text-xs text-red-600">Passwords do not match</p>}
+          {passwordsMismatch && <p className="mt-1.5 text-xs text-red-600">{t.auth.register.passwordMismatch}</p>}
         </div>
 
-        <SubmitButton loading={submitting} loadingLabel="Creating account…">
-          Create account
+        <SubmitButton loading={submitting} loadingLabel={t.auth.register.submitting}>
+          {t.auth.register.submit}
         </SubmitButton>
       </form>
     </AuthLayout>

@@ -6,6 +6,7 @@ interface ConfirmDialogProps {
   title: string;
   message: string;
   confirmLabel?: string;
+  cancelLabel?: string;
   danger?: boolean;
   onConfirm: () => Promise<void> | void;
   onClose: () => void;
@@ -16,6 +17,7 @@ export function ConfirmDialog({
   title,
   message,
   confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   danger = true,
   onConfirm,
   onClose,
@@ -40,7 +42,7 @@ export function ConfirmDialog({
           onClick={onClose}
           className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
         >
-          Cancel
+          {cancelLabel}
         </button>
         <button
           type="button"

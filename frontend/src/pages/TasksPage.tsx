@@ -8,26 +8,38 @@ import { ConfirmDialog } from "../components/ConfirmDialog";
 import { StatCard } from "../components/StatCard";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../api/taskApi";
 import { extractErrorMessage } from "../utils/apiError";
+import { matchesDueFilter } from "../utils/dueDate";
 import { useAuth } from "../context/AuthContext";
-import type { Task, TaskInput, TaskStatus } from "../types";
-
-const STATUS_FILTERS: Array<{ label: string; value: TaskStatus | "" }> = [
-  { label: "All statuses", value: "" },
-  { label: "To do", value: "TODO" },
-  { label: "In progress", value: "IN_PROGRESS" },
-  { label: "Done", value: "DONE" },
-];
+import { useLanguage } from "../i18n/LanguageContext";
+import type { DueFilter, Task, TaskInput, TaskStatus } from "../types";
 
 export function TasksPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<TaskStatus | "">("");
+  const [dueFilter, setDueFilter] = useState<DueFilter>("ALL");
   const [search, setSearch] = useState("");
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+
+  const statusFilters: Array<{ label: string; value: TaskStatus | "" }> = [
+    { label: t.dashboard.statusAll, value: "" },
+    { label: t.dashboard.statusTodo, value: "TODO" },
+    { label: t.dashboard.statusInProgress, value: "IN_PROGRESS" },
+    { label: t.dashboard.statusDone, value: "DONE" },
+  ];
+
+  const dueFilters: Array<{ label: string; value: DueFilter }> = [
+    { label: t.dashboard.dueAll, value: "ALL" },
+    { label: t.dashboard.dueOverdue, value: "OVERDUE" },
+    { label: t.dashboard.dueToday, value: "TODAY" },
+    { label: t.dashboard.dueNext7, value: "NEXT_7_DAYS" },
+    { label: t.dashboard.dueNoDate, value: "NO_DATE" },
+  ];
 
   const loadTasks = useCallback(async () => {
     setLoading(true);
@@ -35,10 +47,11 @@ export function TasksPage() {
       const data = await fetchTasks();
       setTasks(data);
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Could not load tasks"));
+      toast.error(extractErrorMessage(error, t.dashboard.loadError));
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -50,9 +63,10 @@ export function TasksPage() {
     return tasks.filter((task) => {
       const matchesStatus = !status || task.status === status;
       const matchesSearch = !query || task.title.toLowerCase().includes(query);
-      return matchesStatus && matchesSearch;
+      const matchesDue = matchesDueFilter(task, dueFilter);
+      return matchesStatus && matchesSearch && matchesDue;
     });
-  }, [tasks, status, search]);
+  }, [tasks, status, dueFilter, search]);
 
   const stats = useMemo(
     () => ({
@@ -67,11 +81,11 @@ export function TasksPage() {
   const handleCreate = async (payload: TaskInput) => {
     try {
       await createTask(payload);
-      toast.success("Task created");
+      toast.success(t.dashboard.created);
       setCreateOpen(false);
       await loadTasks();
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Could not create task"));
+      toast.error(extractErrorMessage(error, t.dashboard.createError));
     }
   };
 
@@ -79,11 +93,11 @@ export function TasksPage() {
     if (!editingTask) return;
     try {
       await updateTask(editingTask.id, payload);
-      toast.success("Task updated");
+      toast.success(t.dashboard.updated);
       setEditingTask(null);
       await loadTasks();
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Could not update task"));
+      toast.error(extractErrorMessage(error, t.dashboard.updateError));
     }
   };
 
@@ -91,15 +105,15 @@ export function TasksPage() {
     if (!deletingTask) return;
     try {
       await deleteTask(deletingTask.id);
-      toast.success("Task deleted");
+      toast.success(t.dashboard.deleted);
       setDeletingTask(null);
       await loadTasks();
     } catch (error) {
-      toast.error(extractErrorMessage(error, "Could not delete task"));
+      toast.error(extractErrorMessage(error, t.dashboard.deleteError));
     }
   };
 
-  const firstName = user?.username ?? "there";
+  const firstName = user?.username ?? "";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -107,8 +121,8 @@ export function TasksPage() {
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Welcome back, {firstName}</h1>
-            <p className="mt-1 text-sm text-slate-500">Here's what's on your plate today.</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t.dashboard.welcome(firstName)}</h1>
+            <p className="mt-1 text-sm text-slate-500">{t.dashboard.subtitle}</p>
           </div>
           <button
             onClick={() => setCreateOpen(true)}
@@ -117,13 +131,13 @@ export function TasksPage() {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="h-4 w-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            New task
+            {t.dashboard.newTask}
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard
-            label="Total"
+            label={t.dashboard.statTotal}
             value={stats.total}
             accent="bg-indigo-50 text-indigo-600"
             icon={
@@ -133,7 +147,7 @@ export function TasksPage() {
             }
           />
           <StatCard
-            label="To do"
+            label={t.dashboard.statTodo}
             value={stats.todo}
             accent="bg-slate-100 text-slate-600"
             icon={
@@ -144,7 +158,7 @@ export function TasksPage() {
             }
           />
           <StatCard
-            label="In progress"
+            label={t.dashboard.statInProgress}
             value={stats.inProgress}
             accent="bg-amber-50 text-amber-600"
             icon={
@@ -154,7 +168,7 @@ export function TasksPage() {
             }
           />
           <StatCard
-            label="Done"
+            label={t.dashboard.statDone}
             value={stats.done}
             accent="bg-emerald-50 text-emerald-600"
             icon={
@@ -165,21 +179,39 @@ export function TasksPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
-            <input
-              type="search"
-              placeholder="Search tasks…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-            />
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+              <input
+                type="search"
+                placeholder={t.dashboard.searchPlaceholder}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              />
+            </div>
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              <select
+                value={dueFilter}
+                onChange={(e) => setDueFilter(e.target.value as DueFilter)}
+                className="appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-8 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              >
+                {dueFilters.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex gap-1.5 overflow-x-auto rounded-lg bg-slate-100 p-1">
-            {STATUS_FILTERS.map((option) => (
+            {statusFilters.map((option) => (
               <button
                 key={option.label}
                 onClick={() => setStatus(option.value)}
@@ -193,14 +225,21 @@ export function TasksPage() {
           </div>
         </div>
 
-        <TaskList tasks={filteredTasks} loading={loading} onEdit={setEditingTask} onDelete={setDeletingTask} />
+        <TaskList
+          tasks={filteredTasks}
+          loading={loading}
+          onEdit={setEditingTask}
+          onDelete={setDeletingTask}
+          emptyTitle={t.dashboard.emptyTitle}
+          emptySubtitle={t.dashboard.emptySubtitle}
+        />
       </main>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="New task">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t.dashboard.newTaskModalTitle}>
         <TaskForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
-      <Modal open={!!editingTask} onClose={() => setEditingTask(null)} title="Edit task">
+      <Modal open={!!editingTask} onClose={() => setEditingTask(null)} title={t.dashboard.editTaskModalTitle}>
         {editingTask && (
           <TaskForm initialTask={editingTask} onSubmit={handleUpdate} onCancel={() => setEditingTask(null)} />
         )}
@@ -208,9 +247,10 @@ export function TasksPage() {
 
       <ConfirmDialog
         open={!!deletingTask}
-        title="Delete task"
-        message={`Are you sure you want to delete "${deletingTask?.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t.dashboard.deleteTitle}
+        message={deletingTask ? t.dashboard.deleteMessage(deletingTask.title) : ""}
+        confirmLabel={t.dashboard.deleteConfirm}
+        cancelLabel={t.common.cancel}
         onConfirm={handleDelete}
         onClose={() => setDeletingTask(null)}
       />

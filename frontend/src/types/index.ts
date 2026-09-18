@@ -5,6 +5,7 @@ export interface Task {
   title: string;
   description: string | null;
   status: TaskStatus;
+  dueDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -13,7 +14,10 @@ export interface TaskInput {
   title: string;
   description: string;
   status: TaskStatus;
+  dueDate: string | null;
 }
+
+export type DueFilter = "ALL" | "OVERDUE" | "TODAY" | "NEXT_7_DAYS" | "NO_DATE";
 
 export interface AuthResponse {
   token: string;
