@@ -30,6 +30,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
       SERVER_PORT: ${SERVER_PORT}
+      CORS_ALLOWED_ORIGINS: http://localhost:${FRONTEND_PORT}
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:

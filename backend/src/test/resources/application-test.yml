@@ -14,3 +14,7 @@ app:
   jwt:
     secret: test-secret-key-for-jwt-signing-minimum-32-characters-long
     expiration-ms: 3600000
+  cors:
+    allowed-origins: http://localhost:5173
+  rate-limit:
+    enabled: false
