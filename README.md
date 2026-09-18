@@ -9,6 +9,7 @@ Application complète de gestion de tâches : API REST sécurisée par JWT (Spri
 - [Démarrage rapide (Docker Compose)](#démarrage-rapide-docker-compose)
 - [Démarrage en local (sans Docker)](#démarrage-en-local-sans-docker)
 - [Documentation de l'API](#documentation-de-lapi)
+- [Sécurité](#sécurité)
 - [Variables d'environnement](#variables-denvironnement)
 - [Tests](#tests)
 - [CI/CD](#cicd)
@@ -151,6 +152,20 @@ Une fois le backend démarré, la documentation interactive Swagger est disponib
 
 Les routes protégées attendent l'en-tête `Authorization: Bearer <token>`.
 
+## Sécurité
+
+Conçu avec une hypothèse d'usage sensible (le sujet mentionne des systèmes financiers) :
+
+- **Mots de passe** : politique de complexité réelle (10 caractères min., majuscule, minuscule, chiffre, caractère spécial) via un validateur Bean Validation dédié (`@StrongPassword`), plus une liste de mots de passe courants rejetés même s'ils satisfont la complexité (ex. `Password123!`). Hashés avec BCrypt, jamais stockés ni renvoyés en clair. Le changement de mot de passe exige l'ancien mot de passe et refuse de le réutiliser.
+- **Anti brute-force** : `/api/auth/login` et `/api/auth/register` sont limités à 10 tentatives / 15 min par IP (filtre en mémoire, retourne `429`), désactivé uniquement dans le profil de test.
+- **JWT** : signé HMAC, sans secret par défaut codé en dur — l'application refuse de démarrer si `JWT_SECRET` n'est pas fourni, plutôt que de tourner silencieusement avec un secret public.
+- **CORS** : liste blanche explicite d'origines (`CORS_ALLOWED_ORIGINS`), pas de wildcard, `allowCredentials` désactivé (l'API n'utilise pas de cookies).
+- **Isolation des données** : chaque requête sur `/api/tasks` est filtrée par l'utilisateur authentifié ; aucun accès aux tâches d'un autre compte, y compris par ID deviné.
+- **Pas de secret dans le dépôt** : toute la configuration sensible vient de fichiers `.env` non commités (voir section suivante).
+- **En-têtes de sécurité** : les protections par défaut de Spring Security s'appliquent (`X-Content-Type-Options`, `X-Frame-Options`, session stateless).
+
+Compromis connus, assumés pour ce périmètre de test : le token JWT est stocké côté client dans `localStorage` (pattern standard pour une SPA sans backend-for-frontend, mais sensible au vol par XSS si une faille d'injection existait — React échappe le rendu par défaut et le code n'utilise `dangerouslySetInnerHTML` nulle part) ; l'inscription révèle si un email est déjà utilisé (compromis UX courant) ; et TLS n'est pas géré par l'application elle-même (à terminer au niveau du reverse proxy/hébergeur en production).
+
 ## Variables d'environnement
 
 ### Backend
@@ -162,8 +177,9 @@ Les routes protégées attendent l'en-tête `Authorization: Bearer <token>`.
 | `DB_NAME`           | `taskmanager`                                                | Nom de la base |
 | `DB_USERNAME`       | `taskmanager`                                                | Utilisateur MySQL |
 | `DB_PASSWORD`       | `taskmanager`                                                | Mot de passe MySQL |
-| `JWT_SECRET`        | valeur de développement fournie                              | Clé de signature JWT (à changer en production) |
+| `JWT_SECRET`        | **aucun — obligatoire**                                      | Clé de signature JWT ; l'app refuse de démarrer si absente |
 | `JWT_EXPIRATION_MS` | `86400000` (24h)                                             | Durée de validité du token |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173`                                   | Origines autorisées (liste séparée par des virgules) |
 
 ### Frontend
 
