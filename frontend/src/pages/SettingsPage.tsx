@@ -164,16 +164,19 @@ export function SettingsPage() {
               onChange={(e) => setCurrentPassword(e.target.value)}
               placeholder="••••••••"
             />
-            <PasswordInput
-              id="new-password"
-              label={t.settings.newPassword}
-              required
-              minLength={8}
-              autoComplete="new-password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder={t.settings.newPasswordHint}
-            />
+            <div>
+              <PasswordInput
+                id="new-password"
+                label={t.settings.newPassword}
+                required
+                minLength={10}
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder={t.settings.newPasswordHint}
+              />
+              <p className="mt-1.5 text-xs text-slate-400">{t.settings.passwordRequirements}</p>
+            </div>
             <PasswordInput
               id="confirm-new-password"
               label={t.settings.confirmNewPassword}

@@ -88,16 +88,19 @@ export function RegisterPage() {
           />
         </div>
 
-        <PasswordInput
-          id="password"
-          label={t.auth.register.password}
-          required
-          minLength={8}
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder={t.auth.register.passwordHint}
-        />
+        <div>
+          <PasswordInput
+            id="password"
+            label={t.auth.register.password}
+            required
+            minLength={10}
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t.auth.register.passwordHint}
+          />
+          <p className="mt-1.5 text-xs text-slate-400">{t.auth.register.passwordRequirements}</p>
+        </div>
 
         <div>
           <PasswordInput
