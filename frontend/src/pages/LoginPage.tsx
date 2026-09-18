@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { extractErrorMessage } from "../utils/apiError";
+import { AuthLayout } from "../components/AuthLayout";
+import { PasswordInput } from "../components/PasswordInput";
+import { SubmitButton } from "../components/SubmitButton";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -25,51 +28,49 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="mb-6 text-xl font-semibold text-slate-800">Log in</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {submitting ? "Logging in…" : "Log in"}
-          </button>
-        </form>
-        <p className="mt-4 text-center text-sm text-slate-500">
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Sign in to manage your tasks"
+      footer={
+        <>
           No account?{" "}
-          <Link to="/register" className="font-medium text-indigo-600 hover:underline">
-            Register
+          <Link to="/register" className="font-medium text-indigo-600 transition-colors hover:text-indigo-700">
+            Create one
           </Link>
-        </p>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition-colors duration-150 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+          />
+        </div>
+
+        <PasswordInput
+          id="password"
+          label="Password"
+          required
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+        />
+
+        <SubmitButton loading={submitting} loadingLabel="Signing in…">
+          Log in
+        </SubmitButton>
+      </form>
+    </AuthLayout>
   );
 }
