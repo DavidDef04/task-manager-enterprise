@@ -11,6 +11,7 @@ interface AuthContextValue {
   login: (payload: LoginPayload) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => void;
+  updateUser: (patch: Partial<Pick<AuthUser, "username" | "email">>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -56,8 +57,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (patch: Partial<Pick<AuthUser, "username" | "email">>) => {
+    setUser((current) => {
+      if (!current) return current;
+      const updated = { ...current, ...patch };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isAuthenticated: !!user, login, register, logout }),
+    () => ({ user, isAuthenticated: !!user, login, register, logout, updateUser }),
     [user]
   );
 

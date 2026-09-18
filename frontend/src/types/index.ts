@@ -40,6 +40,23 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface UpdateProfilePayload {
+  username: string;
+  email: string;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface ApiErrorResponse {
   timestamp?: string;
   status?: number;
