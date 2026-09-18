@@ -1,7 +1,7 @@
 package com.taskmanager.backend.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.taskmanager.backend.dto.RegisterRequest;
 import com.taskmanager.backend.dto.TaskRequest;
 import com.taskmanager.backend.entity.TaskStatus;

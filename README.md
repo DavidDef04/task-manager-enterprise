@@ -78,8 +78,8 @@ docker compose up --build
 ```
 
 - Frontend : http://localhost:5173
-- API : http://localhost:8080/api
-- Documentation Swagger : http://localhost:8080/swagger-ui.html
+- API : http://localhost:8081/api
+- Documentation Swagger : http://localhost:8081/swagger-ui.html
 - MySQL exposé sur le port 3306 (utilisateur `taskmanager` / mot de passe `taskmanager`)
 
 ## Démarrage en local (sans Docker)
@@ -93,7 +93,7 @@ cd backend
 ./mvnw spring-boot:run
 ```
 
-L'API démarre sur `http://localhost:8080`. Par défaut elle se connecte à `jdbc:mysql://localhost:3306/taskmanager` (base créée automatiquement). Ces valeurs sont surchargeables via les variables d'environnement `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`.
+L'API démarre sur `http://localhost:8081`. Par défaut elle se connecte à `jdbc:mysql://localhost:3306/taskmanager` (base créée automatiquement). Ces valeurs sont surchargeables via les variables d'environnement `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`.
 
 ### Frontend
 
@@ -141,7 +141,7 @@ Les routes protégées attendent l'en-tête `Authorization: Bearer <token>`.
 
 | Variable        | Défaut                          | Description |
 |------------------|----------------------------------|--------------|
-| `VITE_API_URL`  | `http://localhost:8080/api`      | URL de base de l'API consommée par le frontend |
+| `VITE_API_URL`  | `http://localhost:8081/api`      | URL de base de l'API consommée par le frontend |
 
 ## Tests
 

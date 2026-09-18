@@ -1,6 +1,6 @@
 package com.taskmanager.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.taskmanager.backend.dto.LoginRequest;
 import com.taskmanager.backend.dto.RegisterRequest;
 import org.junit.jupiter.api.Test;
