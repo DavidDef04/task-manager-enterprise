@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
@@ -31,6 +32,8 @@ public class Task {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TaskStatus status;
+
+    private LocalDate dueDate;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

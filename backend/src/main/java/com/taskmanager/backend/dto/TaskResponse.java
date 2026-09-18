@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -16,6 +17,7 @@ public class TaskResponse {
     private String title;
     private String description;
     private TaskStatus status;
+    private LocalDate dueDate;
     private Instant createdAt;
     private Instant updatedAt;
 }

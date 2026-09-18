@@ -52,6 +52,7 @@ public class TaskService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .status(request.getStatus() != null ? request.getStatus() : TaskStatus.TODO)
+                .dueDate(request.getDueDate())
                 .user(currentUser)
                 .build();
 
@@ -66,6 +67,7 @@ public class TaskService {
 
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setDueDate(request.getDueDate());
         if (request.getStatus() != null) {
             task.setStatus(request.getStatus());
         }

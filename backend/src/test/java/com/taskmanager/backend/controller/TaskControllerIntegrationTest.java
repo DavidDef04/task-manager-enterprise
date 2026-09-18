@@ -49,7 +49,7 @@ class TaskControllerIntegrationTest {
 
     @Test
     void createTask_returns401_whenTokenIsInvalid() throws Exception {
-        TaskRequest request = new TaskRequest("Task", "desc", TaskStatus.TODO);
+        TaskRequest request = new TaskRequest("Task", "desc", TaskStatus.TODO, null);
 
         mockMvc.perform(post("/api/tasks")
                         .header("Authorization", "Bearer not-a-real-token")
@@ -62,7 +62,7 @@ class TaskControllerIntegrationTest {
     void taskLifecycle_createListUpdateDelete_succeeds() throws Exception {
         String token = registerAndGetToken("gina", "gina@example.com");
 
-        TaskRequest createRequest = new TaskRequest("Write tests", "Cover edge cases", TaskStatus.TODO);
+        TaskRequest createRequest = new TaskRequest("Write tests", "Cover edge cases", TaskStatus.TODO, null);
         String createBody = mockMvc.perform(post("/api/tasks")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ class TaskControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Write tests"));
 
-        TaskRequest updateRequest = new TaskRequest("Write tests", "Cover edge cases", TaskStatus.DONE);
+        TaskRequest updateRequest = new TaskRequest("Write tests", "Cover edge cases", TaskStatus.DONE, null);
         mockMvc.perform(put("/api/tasks/{id}", taskId)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +106,7 @@ class TaskControllerIntegrationTest {
     @Test
     void updateTask_returns404_whenTaskIdDoesNotExist() throws Exception {
         String token = registerAndGetToken("henry", "henry@example.com");
-        TaskRequest request = new TaskRequest("Ghost task", "desc", TaskStatus.TODO);
+        TaskRequest request = new TaskRequest("Ghost task", "desc", TaskStatus.TODO, null);
 
         mockMvc.perform(put("/api/tasks/{id}", 999999L)
                         .header("Authorization", "Bearer " + token)
@@ -120,7 +120,7 @@ class TaskControllerIntegrationTest {
         String ownerToken = registerAndGetToken("ivan", "ivan@example.com");
         String intruderToken = registerAndGetToken("judy", "judy@example.com");
 
-        TaskRequest createRequest = new TaskRequest("Private task", "Owner only", TaskStatus.TODO);
+        TaskRequest createRequest = new TaskRequest("Private task", "Owner only", TaskStatus.TODO, null);
         String createBody = mockMvc.perform(post("/api/tasks")
                         .header("Authorization", "Bearer " + ownerToken)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +138,7 @@ class TaskControllerIntegrationTest {
     @Test
     void createTask_returns400_whenTitleIsBlank() throws Exception {
         String token = registerAndGetToken("kevin", "kevin@example.com");
-        TaskRequest request = new TaskRequest("", "desc", TaskStatus.TODO);
+        TaskRequest request = new TaskRequest("", "desc", TaskStatus.TODO, null);
 
         mockMvc.perform(post("/api/tasks")
                         .header("Authorization", "Bearer " + token)

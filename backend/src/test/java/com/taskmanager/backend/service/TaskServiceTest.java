@@ -62,7 +62,7 @@ class TaskServiceTest {
 
     @Test
     void createTask_persistsTaskOwnedByCurrentUser() {
-        TaskRequest request = new TaskRequest("Write report", "Quarterly report", TaskStatus.TODO);
+        TaskRequest request = new TaskRequest("Write report", "Quarterly report", TaskStatus.TODO, null);
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> {
             Task task = invocation.getArgument(0);
             task.setId(10L);
@@ -80,7 +80,7 @@ class TaskServiceTest {
 
     @Test
     void createTask_defaultsStatusToTodo_whenStatusNotProvided() {
-        TaskRequest request = new TaskRequest("Untitled status task", null, null);
+        TaskRequest request = new TaskRequest("Untitled status task", null, null, null);
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         TaskResponse response = taskService.createTask(request);
@@ -91,7 +91,7 @@ class TaskServiceTest {
     @Test
     void updateTask_throwsResourceNotFoundException_whenTaskDoesNotBelongToCurrentUser() {
         when(taskRepository.findByIdAndUserId(99L, currentUser.getId())).thenReturn(Optional.empty());
-        TaskRequest request = new TaskRequest("Updated title", "Updated desc", TaskStatus.DONE);
+        TaskRequest request = new TaskRequest("Updated title", "Updated desc", TaskStatus.DONE, null);
 
         assertThatThrownBy(() -> taskService.updateTask(99L, request))
                 .isInstanceOf(ResourceNotFoundException.class);
