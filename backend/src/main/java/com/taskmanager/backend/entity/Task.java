@@ -35,6 +35,8 @@ public class Task {
 
     private LocalDate dueDate;
 
+    private Double estimatedHours;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 

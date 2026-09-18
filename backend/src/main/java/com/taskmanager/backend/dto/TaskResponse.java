@@ -18,6 +18,7 @@ public class TaskResponse {
     private String description;
     private TaskStatus status;
     private LocalDate dueDate;
+    private Double estimatedHours;
     private Instant createdAt;
     private Instant updatedAt;
 }
