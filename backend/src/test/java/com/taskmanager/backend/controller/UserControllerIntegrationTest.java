@@ -32,7 +32,7 @@ class UserControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     private String registerAndGetToken(String username, String email) throws Exception {
-        RegisterRequest request = new RegisterRequest(username, email, "securePass1");
+        RegisterRequest request = new RegisterRequest(username, email, "SecurePass1!");
         String body = mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -90,7 +90,7 @@ class UserControllerIntegrationTest {
     @Test
     void changePassword_returns204_whenCurrentPasswordIsCorrect() throws Exception {
         String token = registerAndGetToken("paula", "paula@example.com");
-        ChangePasswordRequest request = new ChangePasswordRequest("securePass1", "newSecurePass1");
+        ChangePasswordRequest request = new ChangePasswordRequest("SecurePass1!", "NewSecurePass1!");
 
         mockMvc.perform(put("/api/users/me/password")
                         .header("Authorization", "Bearer " + token)
@@ -102,7 +102,7 @@ class UserControllerIntegrationTest {
     @Test
     void changePassword_returns401_whenCurrentPasswordIsWrong() throws Exception {
         String token = registerAndGetToken("quentin", "quentin@example.com");
-        ChangePasswordRequest request = new ChangePasswordRequest("wrongCurrentPass", "newSecurePass1");
+        ChangePasswordRequest request = new ChangePasswordRequest("wrongCurrentPass", "NewSecurePass1!");
 
         mockMvc.perform(put("/api/users/me/password")
                         .header("Authorization", "Bearer " + token)

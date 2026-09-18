@@ -29,7 +29,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void register_returns201WithToken_whenPayloadIsValid() throws Exception {
-        RegisterRequest request = new RegisterRequest("alice", "alice@example.com", "securePass1");
+        RegisterRequest request = new RegisterRequest("alice", "alice@example.com", "SecurePass1!");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -42,14 +42,14 @@ class AuthControllerIntegrationTest {
 
     @Test
     void register_returns409_whenEmailAlreadyRegistered() throws Exception {
-        RegisterRequest request = new RegisterRequest("bob", "bob@example.com", "securePass1");
+        RegisterRequest request = new RegisterRequest("bob", "bob@example.com", "SecurePass1!");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        RegisterRequest duplicate = new RegisterRequest("bobby", "bob@example.com", "anotherPass1");
+        RegisterRequest duplicate = new RegisterRequest("bobby", "bob@example.com", "AnotherPass1!");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,7 +60,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void register_returns400_whenEmailIsInvalid() throws Exception {
-        RegisterRequest request = new RegisterRequest("carol", "not-an-email", "securePass1");
+        RegisterRequest request = new RegisterRequest("carol", "not-an-email", "SecurePass1!");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,13 +82,13 @@ class AuthControllerIntegrationTest {
 
     @Test
     void login_returns200WithToken_whenCredentialsAreCorrect() throws Exception {
-        RegisterRequest register = new RegisterRequest("erin", "erin@example.com", "securePass1");
+        RegisterRequest register = new RegisterRequest("erin", "erin@example.com", "SecurePass1!");
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(register)))
                 .andExpect(status().isCreated());
 
-        LoginRequest login = new LoginRequest("erin@example.com", "securePass1");
+        LoginRequest login = new LoginRequest("erin@example.com", "SecurePass1!");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void login_returns401_whenPasswordIsWrong() throws Exception {
-        RegisterRequest register = new RegisterRequest("frank", "frank@example.com", "securePass1");
+        RegisterRequest register = new RegisterRequest("frank", "frank@example.com", "SecurePass1!");
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(register)))

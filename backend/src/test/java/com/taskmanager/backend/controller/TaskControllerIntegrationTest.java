@@ -30,7 +30,7 @@ class TaskControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     private String registerAndGetToken(String username, String email) throws Exception {
-        RegisterRequest request = new RegisterRequest(username, email, "securePass1");
+        RegisterRequest request = new RegisterRequest(username, email, "SecurePass1!");
         String body = mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
