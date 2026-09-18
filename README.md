@@ -235,3 +235,5 @@ task-manager-enterprise/
 | Tableau de bord | Création de tâche (calendrier) |
 |---|---|
 | ![Tableau de bord](docs/screenshots/dashboard.png) | ![Formulaire de tâche avec calendrier](docs/screenshots/task-form-calendar.png) |
+
+![Formulaire de nouvelle tâche](docs/screenshots/new-task-form.png)
