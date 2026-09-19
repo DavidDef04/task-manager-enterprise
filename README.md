@@ -254,6 +254,8 @@ task-manager-enterprise/
 
 En bonus du test, un client mobile Flutter (Android) est fourni dans [`mobile/`](mobile), avec l'authentification JWT et le CRUD complet des tâches, connecté à la même API backend que le frontend web. Voir [`mobile/README.md`](mobile/README.md) pour l'installation, la configuration de l'URL du backend et la génération de l'APK.
 
+📱 **APK prêt à installer** : [télécharger la dernière release](https://github.com/DavidDef04/task-manager-enterprise/releases/tag/v1.0.0-mobile) (pas besoin de compiler le projet).
+
 ## Captures d'écran
 
 | Connexion | Inscription |

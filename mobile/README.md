@@ -2,6 +2,8 @@
 
 A Flutter client for the Task Manager Enterprise backend: register/login (JWT), and full CRUD on tasks (title, description, status, due date, estimated hours), with the same visual language as the web app.
 
+📱 **Pre-built APK**: download the latest release [here](https://github.com/DavidDef04/task-manager-enterprise/releases/tag/v1.0.0-mobile) — no need to build from source.
+
 ## Stack
 
 - Flutter 3.47 / Dart 3.13
