@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/*
+ * Deliberately tighter than Tailwind's stock scale (8/12/16px "soft SaaS" look).
+ * A crisper, more institutional corner treatment fits a finance-facing product.
+ */
+@theme {
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
+}
+
 body {
   margin: 0;
 }

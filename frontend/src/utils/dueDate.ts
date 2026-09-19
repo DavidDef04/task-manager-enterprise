@@ -1,4 +1,4 @@
-import type { DueFilter, Task } from "../types";
+import type { DueFilterValue, Task } from "../types";
 import type { Translations } from "../i18n/translations";
 
 function startOfToday(): Date {
@@ -22,15 +22,51 @@ export function isOverdue(task: Task): boolean {
   return !!task.dueDate && task.status !== "DONE" && daysUntil(task.dueDate) < 0;
 }
 
-export function matchesDueFilter(task: Task, filter: DueFilter): boolean {
-  if (filter === "ALL") return true;
-  if (filter === "NO_DATE") return !task.dueDate;
+function startOfWeek(date: Date): Date {
+  const d = new Date(date);
+  const offset = (d.getDay() + 6) % 7; // Monday-first
+  d.setDate(d.getDate() - offset);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function endOfWeek(date: Date): Date {
+  const start = startOfWeek(date);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+export function matchesDueFilter(task: Task, filter: DueFilterValue): boolean {
+  const { preset, from, to } = filter;
+
+  if (preset === "ALL") return true;
+  if (preset === "NO_DATE") return !task.dueDate;
   if (!task.dueDate) return false;
 
+  const due = parseDate(task.dueDate);
   const diff = daysUntil(task.dueDate);
-  if (filter === "OVERDUE") return diff < 0 && task.status !== "DONE";
-  if (filter === "TODAY") return diff === 0;
-  if (filter === "NEXT_7_DAYS") return diff >= 0 && diff <= 7;
+
+  if (preset === "OVERDUE") return diff < 0 && task.status !== "DONE";
+  if (preset === "TODAY") return diff === 0;
+
+  if (preset === "THIS_WEEK") {
+    const today = startOfToday();
+    return due >= startOfWeek(today) && due <= endOfWeek(today);
+  }
+
+  if (preset === "THIS_MONTH") {
+    const today = startOfToday();
+    return due.getFullYear() === today.getFullYear() && due.getMonth() === today.getMonth();
+  }
+
+  if (preset === "CUSTOM") {
+    if (from && due < parseDate(from)) return false;
+    if (to && due > parseDate(to)) return false;
+    return Boolean(from || to);
+  }
+
   return true;
 }
 

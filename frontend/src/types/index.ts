@@ -19,7 +19,13 @@ export interface TaskInput {
   estimatedHours: number | null;
 }
 
-export type DueFilter = "ALL" | "OVERDUE" | "TODAY" | "NEXT_7_DAYS" | "NO_DATE";
+export type DuePreset = "ALL" | "OVERDUE" | "TODAY" | "THIS_WEEK" | "THIS_MONTH" | "NO_DATE" | "CUSTOM";
+
+export interface DueFilterValue {
+  preset: DuePreset;
+  from: string | null;
+  to: string | null;
+}
 
 export interface AuthResponse {
   token: string;

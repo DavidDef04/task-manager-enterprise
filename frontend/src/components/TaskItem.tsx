@@ -9,10 +9,10 @@ const STATUS_STYLES: Record<Task["status"], string> = {
   DONE: "bg-emerald-100 text-emerald-700",
 };
 
-const STATUS_DOT: Record<Task["status"], string> = {
-  TODO: "bg-slate-400",
-  IN_PROGRESS: "bg-amber-500",
-  DONE: "bg-emerald-500",
+const STATUS_ACCENT: Record<Task["status"], string> = {
+  TODO: "border-l-slate-400",
+  IN_PROGRESS: "border-l-amber-500",
+  DONE: "border-l-emerald-500",
 };
 
 interface TaskItemProps {
@@ -38,11 +38,10 @@ export function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.18 }}
-      className="group flex items-start justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+      className={`group flex items-start justify-between gap-4 rounded-r-xl border border-l-4 border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${STATUS_ACCENT[task.status]}`}
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${STATUS_DOT[task.status]}`} />
           <h3 className="truncate font-medium text-slate-800">{task.title}</h3>
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>
             {t.taskForm[STATUS_LABEL_KEY[task.status]]}
@@ -69,7 +68,7 @@ export function TaskItem({ task, onEdit, onDelete }: TaskItemProps) {
             </span>
           )}
         </div>
-        {task.description && <p className="mt-1.5 pl-3.5 text-sm text-slate-500">{task.description}</p>}
+        {task.description && <p className="mt-1.5 text-sm text-slate-500">{task.description}</p>}
       </div>
       <div className="flex shrink-0 gap-1.5">
         <button

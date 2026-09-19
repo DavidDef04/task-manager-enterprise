@@ -6,12 +6,13 @@ import { TaskList } from "../components/TaskList";
 import { Modal } from "../components/Modal";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { StatCard } from "../components/StatCard";
+import { DueFilterMenu } from "../components/DueFilterMenu";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../api/taskApi";
 import { extractErrorMessage } from "../utils/apiError";
 import { matchesDueFilter } from "../utils/dueDate";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../i18n/LanguageContext";
-import type { DueFilter, Task, TaskInput, TaskStatus } from "../types";
+import type { DueFilterValue, Task, TaskInput, TaskStatus } from "../types";
 
 export function TasksPage() {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ export function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<TaskStatus | "">("");
-  const [dueFilter, setDueFilter] = useState<DueFilter>("ALL");
+  const [dueFilter, setDueFilter] = useState<DueFilterValue>({ preset: "ALL", from: null, to: null });
   const [search, setSearch] = useState("");
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -31,14 +32,6 @@ export function TasksPage() {
     { label: t.dashboard.statusTodo, value: "TODO" },
     { label: t.dashboard.statusInProgress, value: "IN_PROGRESS" },
     { label: t.dashboard.statusDone, value: "DONE" },
-  ];
-
-  const dueFilters: Array<{ label: string; value: DueFilter }> = [
-    { label: t.dashboard.dueAll, value: "ALL" },
-    { label: t.dashboard.dueOverdue, value: "OVERDUE" },
-    { label: t.dashboard.dueToday, value: "TODAY" },
-    { label: t.dashboard.dueNext7, value: "NEXT_7_DAYS" },
-    { label: t.dashboard.dueNoDate, value: "NO_DATE" },
   ];
 
   const loadTasks = useCallback(async () => {
@@ -193,22 +186,7 @@ export function TasksPage() {
                 className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
               />
             </div>
-            <div className="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-              </svg>
-              <select
-                value={dueFilter}
-                onChange={(e) => setDueFilter(e.target.value as DueFilter)}
-                className="appearance-none rounded-lg border border-slate-300 bg-white py-2.5 pl-9 pr-8 text-sm shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-              >
-                {dueFilters.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <DueFilterMenu value={dueFilter} onChange={setDueFilter} />
           </div>
           <div className="flex gap-1.5 overflow-x-auto rounded-lg bg-slate-100 p-1">
             {statusFilters.map((option) => (
