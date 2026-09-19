@@ -14,6 +14,7 @@ Application complète de gestion de tâches : API REST sécurisée par JWT (Spri
 - [Tests](#tests)
 - [CI/CD](#cicd)
 - [Structure du projet](#structure-du-projet)
+- [Application mobile (Flutter)](#application-mobile-flutter)
 - [Captures d'écran](#captures-décran)
 
 ## Architecture
@@ -238,9 +239,20 @@ task-manager-enterprise/
 │   │   ├── pages/
 │   │   └── types/
 │   └── Dockerfile
+├── mobile/
+│   └── lib/
+│       ├── models/
+│       ├── services/
+│       ├── screens/
+│       ├── widgets/
+│       └── theme/
 ├── docker-compose.yml
 └── .github/workflows/ci.yml
 ```
+
+## Application mobile (Flutter)
+
+En bonus du test, un client mobile Flutter (Android) est fourni dans [`mobile/`](mobile), avec l'authentification JWT et le CRUD complet des tâches, connecté à la même API backend que le frontend web. Voir [`mobile/README.md`](mobile/README.md) pour l'installation, la configuration de l'URL du backend et la génération de l'APK.
 
 ## Captures d'écran
 
